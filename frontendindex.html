@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Video Studio</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f0f0f;
+  color: white;
+}
+
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background: #181818;
+  position: fixed;
+  padding: 20px;
+}
+
+.main {
+  margin-left: 240px;
+  padding: 40px;
+}
+
+textarea {
+  width: 100%;
+  height: 120px;
+  background: #1e1e1e;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+button {
+  background: #00ffcc;
+  border: none;
+  padding: 12px 25px;
+  margin-top: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+video {
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+  <h2>🎬 AI Studio</h2>
+  <p>Text → Video</p>
+</div>
+
+<div class="main">
+
+  <h1>Generate Video</h1>
+
+  <textarea id="prompt" placeholder="A cinematic drone shot of mountains..."></textarea>
+
+  <button onclick="generate()">Generate</button>
+
+  <p id="status"></p>
+
+  <video id="video" controls style="display:none;"></video>
+
+</div>
+
+<script>
+async function generate() {
+  const prompt = document.getElementById("prompt").value;
+  const status = document.getElementById("status");
+  const video = document.getElementById("video");
+
+  if (!prompt) {
+    status.innerText = "Enter prompt first";
+    return;
+  }
+
+  status.innerText = "⏳ Generating...";
+  video.style.display = "none";
+
+  try {
+    const res = await fetch("https://YOUR-BACKEND-URL/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt })
+    });
+
+    const data = await res.json();
+
+    video.src = data.video_url;
+    video.style.display = "block";
+
+    status.innerText = "✅ Done";
+
+  } catch (err) {
+    status.innerText = "❌ Error";
+  }
+}
+</script>
+
+</body>
+</html>
